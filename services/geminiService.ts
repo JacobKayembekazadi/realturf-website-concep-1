@@ -1,12 +1,22 @@
 
-import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { allProducts, KNOWLEDGE_BASE_CONTEXT } from "../constants";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const API_KEY = process.env.API_KEY || '';
+
+if (!API_KEY) {
+  console.warn('Warning: GEMINI_API_KEY is not configured. AI features will not work.');
+}
+
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export const getChatResponse = async (history: { role: 'user' | 'model'; parts: { text: string }[] }[], newMessage: string): Promise<string> => {
+  if (!API_KEY) {
+    return "AI features are currently unavailable. Please configure your API key.";
+  }
+
   const chat = ai.chats.create({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-2.0-flash',
     config: {
       systemInstruction: `You are RealTurf's premium AI concierge. Your tone is professional, helpful, and expert. Answer questions about products, installation, and tech like MaxDrain or SoftMax. Do not mention pricing. Knowledge base:\n${KNOWLEDGE_BASE_CONTEXT}`
     },
@@ -23,6 +33,13 @@ export const getChatResponse = async (history: { role: 'user' | 'model'; parts: 
 };
 
 export const getQuoteAnalysis = async (projectDetails: any, image?: { mimeType: string; data: string }): Promise<string> => {
+  if (!API_KEY) {
+    return JSON.stringify({
+      recommendations: [{ productName: "Absolute", reason: "API key not configured. Default recommendation provided." }],
+      analysis: "AI analysis is unavailable. Please configure your API key for full functionality."
+    });
+  }
+
   const contents: any[] = [{
     text: `Analyze this turf installation project. Recommend 2-3 specific RealTurf products from this list: ${JSON.stringify(allProducts.map(p => p.name))}.
     Details: ${JSON.stringify(projectDetails)}
@@ -54,7 +71,7 @@ export const getQuoteAnalysis = async (projectDetails: any, image?: { mimeType: 
   
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: { parts: contents },
       config: {
         responseMimeType: "application/json",

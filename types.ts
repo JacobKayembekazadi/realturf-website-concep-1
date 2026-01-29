@@ -1,11 +1,12 @@
 
 export interface Product {
   name: string;
-  category: 'Landscape' | 'Sports';
+  category: 'landscape' | 'sports';
   description: string;
   image: string;
   pileHeight?: string;
   faceWeight?: string;
+  faceWeightVal?: number;
   fiber?: string;
   apps?: string[];
   features: string[];
