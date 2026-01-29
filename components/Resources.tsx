@@ -1,8 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { knowledgeBase } from '../constants';
 import { ChevronDown, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Safe markdown-like bold text parser
+const parseMarkdownBold = (text: string): ReactNode[] => {
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return parts.map((part, index) =>
+    index % 2 === 1 ? <strong key={index}>{part}</strong> : part
+  );
+};
 
 const AccordionItem: React.FC<{ title: string; children: React.ReactNode; isOpen: boolean; onClick: () => void }> = ({ title, children, isOpen, onClick }) => {
   return (
@@ -60,7 +68,7 @@ export default function Resources() {
               onClick={() => handleToggle(index)}
             >
               {article.content.map((paragraph, pIndex) => (
-                  <p key={pIndex} dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></p>
+                  <p key={pIndex}>{parseMarkdownBold(paragraph)}</p>
               ))}
             </AccordionItem>
           ))}

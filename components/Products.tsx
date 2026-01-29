@@ -3,125 +3,25 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Award, ExternalLink, ArrowRightLeft, X, Trash2, CheckCircle2 } from 'lucide-react';
-
-const PRODUCTS = [
-  // ========== LANDSCAPE PRODUCTS ==========
-  {
-    name: 'Absolute',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/09/Absolute-artificial-turf-01-1.jpg',
-    pileHeight: '2"',
-    faceWeight: '107 oz/yd²',
-    faceWeightVal: 107,
-    fiber: 'C & Diamond',
-    apps: ['Commercial', 'Rooftop', 'Pool', 'Patio', 'Yard'],
-    features: ['Look & Feel', 'MaxDrain', 'LongLife', 'SoftMax', 'MaxRecover', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/absolute/'
-  },
-  {
-    name: 'All Seasons',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/10/AllSeasons_Standard.jpg',
-    pileHeight: '1.56"',
-    faceWeight: '87 oz/yd²',
-    faceWeightVal: 87,
-    fiber: 'Wave + D + S',
-    apps: ['Commercial', 'Rooftop', 'Patio', 'Yard'],
-    features: ['LongLife', 'BodyShape', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/all-seasons/'
-  },
-  {
-    name: 'Altitude',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/10/Altitude-artificial-turf-01-1.jpg',
-    pileHeight: '1.75"',
-    faceWeight: '107 oz/yd²',
-    faceWeightVal: 107,
-    fiber: 'Wave + D + S',
-    apps: ['Commercial', 'Yard'],
-    features: ['Look & Feel', 'LongLife', 'BodyShape', 'SoftMax', 'MaxRecover', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/altitude/'
-  },
-  {
-    name: 'Comfort',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/09/Comfort-artificial-turf-01.jpg',
-    pileHeight: '1.375"',
-    faceWeight: '117 oz/yd²',
-    faceWeightVal: 117,
-    fiber: 'Diamond',
-    apps: ['Commercial', 'Rooftop', 'Play', 'Pet', 'Pool', 'Yard'],
-    features: ['Look & Feel', 'LongLife', 'SoftMax', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/comfort/'
-  },
-  {
-    name: 'Deluxe',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/09/Deluxe-artificial-turf-01.jpg',
-    pileHeight: '1.56"',
-    faceWeight: '97 oz/yd²',
-    faceWeightVal: 97,
-    fiber: 'Wave',
-    apps: ['Commercial', 'Rooftop', 'Play', 'Pet', 'Pool', 'Yard'],
-    features: ['Look & Feel', 'LongLife', 'BodyShape', 'SoftMax', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/deluxe/'
-  },
-  {
-    name: 'ECO C',
-    image: 'https://realturf.com/us/wp-content/uploads/2025/10/EcoC-01-scaled-1.jpg',
-    pileHeight: '1.25"',
-    faceWeight: '102 oz/yd²',
-    faceWeightVal: 102,
-    fiber: 'C + Flat',
-    apps: ['Commercial', 'Pet', 'Pool', 'Patio', 'Yard'],
-    features: ['Look & Feel', 'LongLife', 'BodyShape', 'SoftMax', 'FiberFresh', 'PetFriendly', 'KidsProof'],
-    category: 'landscape',
-    url: 'https://realturf.com/us/products/eco-c/'
-  },
-
-  // ========== SPORTS PRODUCTS ==========
-  {
-    name: 'Golf Putt',
-    image: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=800&q=80',
-    pileHeight: '9/16"',
-    faceWeight: '46 oz/yd²',
-    faceWeightVal: 46,
-    fiber: 'Textured',
-    apps: ['Golf', 'Putting Greens'],
-    features: ['Professional Grade', 'True Roll', 'UV Protected', 'All-Weather'],
-    category: 'sports',
-    url: 'https://realturf.com/us/products/sports/golf-putt-artificial-turf/'
-  },
-  {
-    name: 'Soccer Turf',
-    image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?w=800&q=80',
-    pileHeight: '1.5"',
-    faceWeight: '75 oz/yd²',
-    faceWeightVal: 75,
-    fiber: 'High Performance',
-    apps: ['Soccer', 'Football Fields'],
-    features: ['FIFA Certified', 'Player Safety', 'Ball Interaction', 'Max Durability'],
-    category: 'sports',
-    url: 'https://realturf.com/us/artificial-grass/sport/soccer/'
-  }
-];
+import { Search, ExternalLink, ArrowRightLeft, X, Trash2, CheckCircle2 } from 'lucide-react';
+import { allProducts } from '../constants';
+import { Product } from '../types';
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'landscape' | 'sports'>('all');
   const [selectedApp, setSelectedApp] = useState('all');
-  const [comparisonList, setComparisonList] = useState<any[]>([]);
+  const [comparisonList, setComparisonList] = useState<Product[]>([]);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
 
-  const filteredProducts = PRODUCTS.filter(p => {
+  const filteredProducts = allProducts.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
-    const matchesApp = selectedApp === 'all' || p.apps.some(app => app.toLowerCase() === selectedApp);
+    const matchesApp = selectedApp === 'all' || (p.apps?.some(app => app.toLowerCase() === selectedApp) ?? false);
     return matchesSearch && matchesCategory && matchesApp;
   });
 
-  const toggleComparison = (product: any) => {
+  const toggleComparison = (product: Product) => {
     if (comparisonList.find(p => p.name === product.name)) {
       setComparisonList(comparisonList.filter(p => p.name !== product.name));
     } else {
@@ -374,9 +274,9 @@ export default function Products() {
                     {comparisonList.map(p => (
                       <div key={p.name} className="border-t border-gray-100 pt-6">
                         <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-red-600" style={{ width: p.pileHeight.includes('1') ? '50%' : '80%' }} />
+                           <div className="h-full bg-red-600" style={{ width: p.pileHeight?.includes('1') ? '50%' : '80%' }} />
                         </div>
-                        <span className="text-lg font-black text-gray-900 mt-2 block">{p.pileHeight}</span>
+                        <span className="text-lg font-black text-gray-900 mt-2 block">{p.pileHeight ?? 'N/A'}</span>
                       </div>
                     ))}
 
@@ -385,9 +285,9 @@ export default function Products() {
                     {comparisonList.map(p => (
                       <div key={p.name} className="border-t border-gray-100 pt-6">
                         <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-black" style={{ width: `${(p.faceWeightVal / 120) * 100}%` }} />
+                           <div className="h-full bg-black" style={{ width: `${((p.faceWeightVal ?? 0) / 120) * 100}%` }} />
                         </div>
-                        <span className="text-lg font-black text-gray-900 mt-2 block">{p.faceWeight}</span>
+                        <span className="text-lg font-black text-gray-900 mt-2 block">{p.faceWeight ?? 'N/A'}</span>
                       </div>
                     ))}
 
@@ -395,7 +295,7 @@ export default function Products() {
                     <div className="text-gray-400 font-black text-xs uppercase tracking-widest flex items-center border-t border-gray-100 pt-6">Fiber Tech</div>
                     {comparisonList.map(p => (
                       <div key={p.name} className="border-t border-gray-100 pt-6">
-                        <span className="text-sm font-bold text-gray-700 bg-gray-50 px-3 py-1 rounded-lg border border-gray-200">{p.fiber}</span>
+                        <span className="text-sm font-bold text-gray-700 bg-gray-50 px-3 py-1 rounded-lg border border-gray-200">{p.fiber ?? 'N/A'}</span>
                       </div>
                     ))}
 
